@@ -10,7 +10,7 @@ int main(){
   database.add_record(t2);
 
   t1.print_record();
-  t2.print_record();
+  t2.print_record();///////////
 
   return 0;
 }
