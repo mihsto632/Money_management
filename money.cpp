@@ -53,7 +53,7 @@ Trosak::Trosak(const Trosak& t){
 void Trosak::print_record(){
     system("reset");
     cout<<"------------------\n";
-    cout<<"Record created:\n\tTrosak: "<<this->trosak<<"\n\tGodina: "<<this->godina<<"\n\tMesec: "<<this->mesec<<"\n\tDat novac: "<<this->dat_novac<<"\n\tOcekivano: "<<this->ocekivano<<"\n\tPlata: "<<this->plata<<" RSD";
+    cout<<"Record created:\n\tTrosak: "<<this->trosak<<"\n\tGodina: "<<this->godina<<"\n\tMesec: "<<this->mesec<<"\n\tDat novac: "<<this->dat_novac<<"\n\tOcekivano: "<<this->ocekivano<<"\n\tPlata: "<<(this->plata/1000)<<"K RSD";
     if (placeno){
         cout<<"\n\tPlaceno: da";
         //cout<<"\n\tPlaceno: "<<L'\u2713'<<"\n\n";
@@ -86,26 +86,40 @@ void add_record(Database& d){
     bool placeno;
     system("reset");
     cout<<"------------------";
-    cout<<"\nEnter the expense: ";
-    //Clearing cin before getline
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.getline(trosak, 20);
+
+    do{
+        cout<<"\nEnter the expense: ";
+        //Clearing cin before getline
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.getline(trosak, 20);
+    }
+    while (strlen(trosak) < 1 || strlen(trosak) > 20);
+    
     cout<<"\nEnter year: ";
     cin>>godina;
-    cout<<"\nEnter month: ";
-    //Clearing cin before newline
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.getline(mesec, 20);
+
+    //Clearing cin before newline and entering a month
+    do{
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout<<"\nEnter month: ";
+        cin.getline(mesec, 20);
+    }
+    while (!is_it_month(mesec) || strlen(mesec) < 1 || strlen(mesec) > 20);
+
     cout<<"\nEnter expected price: ";
     cin>>ocekivano;
     do {
         cout<<"\nEnter money given(must be <= than expected): ";
         cin>>dat_novac;
     }
-    while (dat_novac > ocekivano);
+    while (dat_novac > ocekivano);\
+
     cout<<"\nEnter salary: ";
     cin>>plata;
     cout<<"------------------\n\n\n";
+
     if (dat_novac == ocekivano)
         placeno = true;
     else 
@@ -187,5 +201,23 @@ void action_0_3_logic(int& action, Database& d){
         default: 
             break;
     }
+}
+
+bool is_it_month(const char* mesec){
+    if (strcmp(mesec, "JANUARY") == 0   || strcmp(mesec, "January") == 0   || strcmp(mesec, "january") == 0   ||
+        strcmp(mesec, "FEBRUARY") == 0  || strcmp(mesec, "February") == 0  || strcmp(mesec, "february") == 0  ||
+        strcmp(mesec, "MARCH") == 0     || strcmp(mesec, "March") == 0     || strcmp(mesec, "march") == 0     ||
+        strcmp(mesec, "APRIL") == 0     || strcmp(mesec, "April") == 0     || strcmp(mesec, "april") == 0     ||
+        strcmp(mesec, "MAY") == 0       || strcmp(mesec, "May") == 0       || strcmp(mesec, "may") == 0       ||
+        strcmp(mesec, "JUNE") == 0      || strcmp(mesec, "June") == 0      || strcmp(mesec, "june") == 0      ||
+        strcmp(mesec, "JULY") == 0      || strcmp(mesec, "July") == 0      || strcmp(mesec, "july") == 0      ||
+        strcmp(mesec, "AUGUST") == 0    || strcmp(mesec, "August") == 0    || strcmp(mesec, "august") == 0    ||
+        strcmp(mesec, "SEPTEMBER") == 0 || strcmp(mesec, "September") == 0 || strcmp(mesec, "september") == 0 ||
+        strcmp(mesec, "OCTOBER") == 0   || strcmp(mesec, "October") == 0   || strcmp(mesec, "october") == 0   ||
+        strcmp(mesec, "NOVEMBER") == 0  || strcmp(mesec, "November") == 0  || strcmp(mesec, "november") == 0  ||
+        strcmp(mesec, "DECEMBER") == 0  || strcmp(mesec, "December") == 0  || strcmp(mesec, "december") == 0)
+            return true;
+    else 
+            return false;
 }
 

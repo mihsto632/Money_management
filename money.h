@@ -68,5 +68,6 @@ void action_0_3_logic(int& action, Database& d);
 void read_from_file();
 void write_to_file();
 void add_record(Database& d, Trosak& t);
+bool is_it_month(const char* mesec);
 
 #endif
