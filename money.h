@@ -4,6 +4,7 @@
 #include<cstring>
 #include<vector>
 #include <cstdlib>
+#include<limits>
 using namespace std;
 
 //Forward declaration for class TROSAK
@@ -47,8 +48,15 @@ class Database{
         float usteda;
     public:
         void add_record(const Trosak& t);
-        //void delete_record(Trosak& t);
-        //void change_record(Trosak& t);
+        void print_database();
+        void print_current_month_view();
+        void print_next_month_view();
+        void print_previous_month_view();
+        void print_savings_view();
+        void print_unspecified_month_view();
+        void print_this_yearly_view();
+        void delete_record(Trosak& t);
+        void update_record(Trosak& t);
 };
 
 
@@ -56,5 +64,9 @@ class Database{
 //GENERIC FUNCTIONS
 //---------------------------------------
 void print_user_interface();// OPTIONS: ENTER A RECORD, DELETE A RECORD, SHOW RECORDS, SEARCH FOR A RECORD, EXIT PROGRAM
+void action_0_3_logic(int& action, Database& d);
+void read_from_file();
+void write_to_file();
+void add_record(Database& d, Trosak& t);
 
 #endif
