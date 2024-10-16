@@ -113,7 +113,9 @@ void add_record(Database& d){
     while (cin.fail()) {
         cin.clear(); // Clear the error state
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore invalid input
-        cout << "Invalid input. Please enter a numeric value for money given: ";
+        cout << "\033[F\033[K"; //Deletes exactly 1 row
+        //cout << "Invalid input. Please enter a numeric value for money given: ";
+        cout<<"\nEnter money given: ";
         cin>>dat_novac; // Retry input
     }
     
@@ -185,7 +187,7 @@ void add_record(Database& d){
         return;
     else{
         system("reset");
-        cout<<"\nExiting the program...\n";
+        cout<<"\nExiting the program...\n\n\n\n\n\n";
         exit(0);
     }
 }
@@ -207,25 +209,27 @@ void action_0_3_logic(int& action, Database& d){
         cout<<"\nEnter action: ";
         cin>>action;
 
-        if (cin.fail() || action <0 || action >3){
+        if (cin.fail() || action <0 || action >2){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             action = -1;
             cout<<"Invalid action. Please try again: ";
         }
     }
-    while(action < 0 || action > 3);
+    while(action < 0 || action > 2);
     
     switch(action){
         case 0: //View database
             system("reset");
             print_database();
             int action_0;
-            cout<<"\n\n\nReturn to main menu: \t\t0";
+            cout<<"\n\n\n---------------------------------";
+            cout<<"\nReturn to main menu: \t\t0";
             cout<<"\nDelete database: \t\t1";
             cout<<"\nExit the program: \t\t2";
+            cout<<"\n---------------------------------\n\n\n";
             do{
-                cout<<"\n\n\nEnter action: ";
+                cout<<"\nEnter valid action: ";
                 cin >> action_0;
             }
             while(action_0 < 0 || action_0 > 2);
@@ -238,9 +242,9 @@ void action_0_3_logic(int& action, Database& d){
                     system("reset");
                     int delete_database_0_1;
                     do{
-                        cout<<"--------------------------------------------------------------------\n";
+                        cout<<"----------------------------------------------------------------\n";
                         cout<<"Are you sure? You won't be able to retrieve data after deletion.\n\t-Yes, delete the entire database \t0\n\t-No, keep the database \t\t\t1";
-                        cout<<"\n--------------------------------------------------------------------\n";
+                        cout<<"\n----------------------------------------------------------------\n";
                         cout<<"\n\nChoose action: ";
                         cin>> delete_database_0_1;
                     }
@@ -250,7 +254,7 @@ void action_0_3_logic(int& action, Database& d){
                     break;
                 case 2:
                     system("reset");
-                    cout<<"Exiting the program...\n\n\n";
+                    cout<<"Exiting the program...\n\n\n\n\n\n";
                     exit(0); //Alternative to return 0, which can't be used in void functions
                     break;
             }
@@ -265,7 +269,7 @@ void action_0_3_logic(int& action, Database& d){
             break;*/
         case 2: //Exit the program
             system("reset");
-            cout<<"Exiting the program...\n\n\n";
+            cout<<"Exiting the program...\n\n\n\n\n\n";
             exit(0); //Alternative to return 0, which can't be used in void functions
         default: 
             break;
