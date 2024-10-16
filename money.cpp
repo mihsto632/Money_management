@@ -93,19 +93,29 @@ void add_record(Database& d){
 
     do {
         cout << "\nEnter expense: ";
-        
         // Clearing cin before getline
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         
         cin.getline(trosak, 20); // Read input
-    } while (strlen(trosak) < 1 || strlen(trosak) > 20);
+         if (strlen(trosak) > 20) {
+            cout << "Input too long! Please enter at most 20 characters.\n";
+        }
+    } while (strlen(trosak) < 1 || strlen(trosak) > 21);
 
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //cin.clear();
+    //cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     //Enter money given
     cout<<"\nEnter money given: ";
     cin>>dat_novac;
+     // Validate dat_novac input
+    while (cin.fail()) {
+        cin.clear(); // Clear the error state
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore invalid input
+        cout << "Invalid input. Please enter a numeric value for money given: ";
+        cin>>dat_novac; // Retry input
+    }
     
     do{
         //Enter expected price
@@ -214,13 +224,27 @@ void action_0_3_logic(int& action, Database& d){
             cout<<"\n\n\nReturn to main menu: \t\t0";
             cout<<"\nDelete database: \t\t1";
             cout<<"\nExit the program: \t\t2";
-            cout<<"\n\n\nEnter action: ";
-            cin >> action_0;
+            do{
+                cout<<"\n\n\nEnter action: ";
+                cin >> action_0;
+            }
+            while(action_0 < 0 || action_0 > 2);
+            
             switch(action_0){
-                case 0:
+                case 0: //Return to main menu
                     action_0_3_logic(action, d);
                     break;               
                 case 1: //Delete entire database
+                    system("reset");
+                    int delete_database_0_1;
+                    do{
+                        cout<<"--------------------------------------------------------------------\n";
+                        cout<<"Are you sure? You won't be able to retrieve data after deletion.\n\t-Yes, delete the entire database \t0\n\t-No, keep the database \t\t\t1";
+                        cout<<"\n--------------------------------------------------------------------\n";
+                        cout<<"\n\nChoose action: ";
+                        cin>> delete_database_0_1;
+                    }
+                    while (delete_database_0_1 < 0 || delete_database_0_1 > 1);
                     delete_entire_database();
                     action_0_3_logic(action, d);
                     break;
