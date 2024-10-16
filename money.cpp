@@ -1,9 +1,13 @@
 #include "money.h"
+
+
+int action;
+
 //------------------------------------------
 //CLASS TROSAK FUNCTION IMPLEMENTATIONS
 //------------------------------------------
 //Constructor
-Trosak::Trosak(const char* trosak, int godina, const char* mesec, double dat_novac, double ocekivano, double plata, bool placeno){
+Trosak::Trosak(const char* trosak, int godina, const char* mesec, int dat_novac, int ocekivano, int plata, bool placeno){
     if (trosak){
         //Copying info from expense local variable to trosak class member
         int broj_bajtova_trosak = strlen(trosak) + 1;
@@ -82,7 +86,7 @@ void add_record(Database& d){
     char* trosak = new char[20];
     int godina; 
     char* mesec = new char[20];
-    double dat_novac, ocekivano, plata;
+    int dat_novac, ocekivano, plata;
     bool placeno;
     system("reset");
     cout<<"------------------";
@@ -126,8 +130,23 @@ void add_record(Database& d){
         placeno = false;
     cout<<"\n";
 
+    //WORKING WITH FILES
     //Making object of Trosak t that calls its constructor using variables user has entered
     Trosak t(trosak, godina, mesec, dat_novac, ocekivano, plata, placeno);
+
+    //Add record to a file
+    ofstream file("database.txt", ios::app); //opens a file for writing and appending
+    //printHeader(file);
+    if (!file.is_open()){
+        cerr<<"Failed to write a record to database. Please try again.\n";
+        exit(1);
+    }
+
+    //Writing the actual data to the file
+    printRow(file, trosak, godina, mesec, dat_novac, ocekivano, plata, placeno); //Putting the row into file
+    //Closing the file
+    file.close();
+    //END OF WORKING WITH FILES
 
     //add_record as a part of database object
     d.add_record(t);
@@ -158,10 +177,10 @@ void add_record(Database& d){
 void print_user_interface(){
     system("reset");
     cout<<"\n-----------------------------------------";
-    cout<<"\n\nDatabase views:               \t\t0";
+    cout<<"\n\nView database:               \t\t0";
     cout<<"\n\nAdd record:                   \t\t1";
-    cout<<"\n\nSearch for record by keyword: \t\t2";
-    cout<<"\n\nExit the program:             \t\t3";
+    //cout<<"\n\nSearch for record by keyword: \t\t2";
+    cout<<"\n\nExit the program:             \t\t2";
     cout<<"\n-----------------------------------------\n\n\n";
 }
 
@@ -182,19 +201,33 @@ void action_0_3_logic(int& action, Database& d){
     while(action < 0 || action > 3);
     
     switch(action){
-        case 0: //Enter database views
-            //show_database_views(); //Future function
-            action_0_3_logic(action, d);
+        case 0: //View database
+            system("reset");
+            print_database();
+            int action_0;
+            cout<<"\n\n\nReturn to main menu: \t\t0";
+            cout<<"\nExit the program: \t\t1";
+            cout<<"\n\n\nEnter action: ";
+            cin >> action_0;
+            switch(action_0){
+                case 0:
+                    action_0_3_logic(action, d);
+                    break;
+                case 1:
+                    system("reset");
+                    cout<<"Exiting the program...\n\n\n";
+                    exit(0); //Alternative to return 0, which can't be used in void functions
+            }
             break;
         case 1: //Add record
             add_record(d); //Adds t to d and prints t
             action_0_3_logic(action, d);
             break;
-        case 2: //Search for record by keyword
+        /*case 2: //Search for record by keyword
             //search_in_database(char* keyword); //Future function
             action_0_3_logic(action, d);
-            break;
-        case 3: //Exit the program
+            break;*/
+        case 2: //Exit the program
             system("reset");
             cout<<"Exiting the program...\n\n\n";
             exit(0); //Alternative to return 0, which can't be used in void functions
@@ -220,4 +253,119 @@ bool is_it_month(const char* mesec){
     else 
             return false;
 }
+// Function to print a row with appropriate formatting to any output stream
+void printRow(std::ostream& out, const char* trosak, int godina, const char* mesec, int dat_novac, int ocekivano, int plata, bool placeno) {
+    out << std::left 
+        << std::setw(20) << (strlen(trosak) == 0 ? "N/A" : trosak) 
+        << std::setw(20) << (dat_novac == 0.0 ? "0" : std::to_string(dat_novac)) 
+        << std::setw(20) << (ocekivano == 0.0 ? "0" : std::to_string(ocekivano)) 
+        << std::setw(20) << (plata == 0.0 ? "0" : std::to_string(plata))
+        << std::setw(20) << (godina == 0 ? "N/A" : std::to_string(godina)) 
+        << std::setw(20) << (strlen(mesec) == 0 ? "N/A" : mesec) 
+        << std::setw(20) << (placeno ? "Da" : "Ne")
+        << std::endl;
+}
 
+// Function to print the table header to any output stream
+void printHeader(std::ostream& out) {
+    out << left
+        << setw(20) << "Trosak" 
+        << setw(20) << "Godina" 
+        << setw(20) << "Mesec"
+        << setw(20) << "Dat novac" 
+        << setw(20) << "Ocekivano" 
+        << setw(20) << "Plata" 
+        << setw(20) << "Placeno" 
+        << '\n';
+    //out <<"-----------------------------------"; // Draw a separator line
+    out<< std::string(140, '-')<<'\n';
+}
+
+//Function that shows database views (0 option in Actions beginning menu)
+void show_database_views(){
+    system("reset");
+    cout<<"----------------------------------\n";
+    cout<<"Full database: \t\t\t0";
+    cout<<"\nCurrent month: \t\t\t1";
+    cout<<"\nNext month:    \t\t\t2";
+    cout<<"\nPrevious month:\t\t\t3";
+    cout<<"\nSavings:       \t\t\t4";
+    cout<<"\nCurrent year:  \t\t\t5";
+    cout<<"\nReturn to main menu: \t\t6";
+    cout<<"\nExit the program: \t\t7";
+    cout<<"\n----------------------------------\n\n\n";
+}
+
+
+//Switch-case logic to ensure right action is taken (only present when inition action is 0, so subsequent action_0 needs to be chosen)
+/*void action_0_logic(int& action_0, Database& d){
+    show_database_views();
+    do{
+        cout<<"\nSelect action: ";
+        cin>>action_0;
+
+        if (cin.fail() || action_0 <0 || action_0 >7){
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            action_0 = -1;
+            cout<<"Invalid action. Please try again: ";
+            show_database_views();
+        }
+    }
+    while(action_0 < 0 || action_0 > 7);
+    
+    switch(action_0){
+        case 0: //Full database
+            //printRow(file, "Alice", 2024, "January", 5.34, 7.89, 0.0, true);
+            //void print_database(); // FUTURE FUNCTION
+            //action_o_logic(action_o, d);
+            //action_0_3_logic(action, d);
+            break;
+        case 1: //Current month
+            //void print_current_month_view(); // FUTURE FUNCTION
+            break;
+        case 2: //Next month
+            //void print_next_month_view(); // FUTURE FUNCTION
+            break;
+        case 3: //Previous month
+            system("reset");
+            //void print_previous_month_view(); // FUTURE FUNCTION
+        case 4: //Savings
+            system("reset");
+            //void print_savings_view(); // FUTURE FUNCTION
+        case 5: //Current year
+            system("reset");
+            //void print_this_yearly_view(); // FUTURE FUNCTION
+        case 6: //Return to main menu
+            system("reset");
+            action_0_3_logic(action, d);
+        case 7:
+            system("reset");
+            cout<<"Exiting the program...\n\n\n";
+            exit(1);
+        default: 
+            show_database_views();
+            break;
+    }
+}*/
+
+//Function that reads database from the 
+void print_database(){
+    const int MAX_LINE_LENGTH = 256;  // Define a maximum line length
+    char line[MAX_LINE_LENGTH];        // C-style string (character array)
+
+    FILE* file = fopen("database.txt", "r");  // Open the file in read mode
+
+    // Check if the file was opened successfully
+    if (file == nullptr) {
+        std::cerr << "Error: Could not open the file." << std::endl;
+        exit(1);
+    }
+
+    // Read each line from the file and print it
+    while (fgets(line, MAX_LINE_LENGTH, file) != nullptr) {
+        std::cout << line;  // Print the line (fgets includes the newline character)
+    }
+
+    fclose(file);  // Close the file
+}

@@ -5,19 +5,21 @@
 #include<vector>
 #include <cstdlib>
 #include<limits>
+#include<fstream>
+#include <iomanip>
+#include <string>
 using namespace std;
 
 //Forward declaration for class TROSAK
 class Trosak;
 class Database;
 
-wchar_t check_mark = L'\u2713'; // ✓
-wchar_t cross_mark = L'\u2717'; // ✗
+//------------------------------------------
+//Declaring a file
+//------------------------------------------
 
-//---------------------------------------
-//VECTOR TABLE
-//---------------------------------------
-
+//wchar_t check_mark = L'\u2713'; // ✓
+//wchar_t cross_mark = L'\u2717'; // ✗
 
 //---------------------------------------
 //CLASS TROSAK
@@ -27,11 +29,11 @@ class Trosak{
         char* trosak;
         char* mesec;
         int godina;
-        double dat_novac, ocekivano, plata;
+        int dat_novac, ocekivano, plata;
         bool placeno;
         //virtual char* tip = 0; //Every child class overwrittes tip to be appropriate to the child class (ex: "Potrebstina", "Cef", "Racun"...)
     public:
-        Trosak(const char* trosak = "Trosak", int godina = 2024, const char* mesec = "Neodredjeno", double dat_novac = 0.0, double ocekivano = 0.0, double plata = 0.0, bool placeno = false);
+        Trosak(const char* trosak = "Trosak", int godina = 2024, const char* mesec = "Neodredjeno", int dat_novac = 0, int ocekivano = 0, int plata = 0, bool placeno = false);
         ~Trosak();
         Trosak(const Trosak& t); //copy constructor
         void print_record();
@@ -48,15 +50,14 @@ class Database{
         float usteda;
     public:
         void add_record(const Trosak& t);
-        void print_database();
-        void print_current_month_view();
-        void print_next_month_view();
-        void print_previous_month_view();
-        void print_savings_view();
-        void print_unspecified_month_view();
-        void print_this_yearly_view();
-        void delete_record(Trosak& t);
-        void update_record(Trosak& t);
+        //void print_current_month_view();
+        //void print_next_month_view();
+        //void print_previous_month_view();
+        //void print_savings_view();
+        //void print_unspecified_month_view();
+        //void print_this_yearly_view();
+        //void delete_record(Trosak& t);
+        //void update_record(Trosak& t);
 };
 
 
@@ -64,10 +65,18 @@ class Database{
 //GENERIC FUNCTIONS
 //---------------------------------------
 void print_user_interface();// OPTIONS: ENTER A RECORD, DELETE A RECORD, SHOW RECORDS, SEARCH FOR A RECORD, EXIT PROGRAM
-void action_0_3_logic(int& action, Database& d);
+void show_database_views(); // WHEN USER INITIALLY ENTERS ACTION 0, SHOWS MULTIPLE VIEWS FROM WHICH TO CHOOSE FURTHER ACTION (ACTION_0 VARIABLE)
+//PRINTS START MENU WITH 0-3 OPTIONS
+void action_0_3_logic(int& action, Database& d); 
+//IF INITIAL ACTION IS 0, WE CHOOSE FROM 1 OF SEVERAL POSSIBLE VIEWS BASED ON ACTION_0 VARIABLE
+void action_0_logic(int& action_0, Database& d);
 void read_from_file();
 void write_to_file();
 void add_record(Database& d, Trosak& t);
 bool is_it_month(const char* mesec);
+// Function to print a row with appropriate formatting to any output stream
+void printRow(std::ostream& out, const char* trosak, int godina, const char* mesec, int dat_novac, int ocekivano, int plata, bool placeno);
+void printHeader(std::ostream& out);
+void print_database();
 
 #endif
