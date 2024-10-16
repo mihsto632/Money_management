@@ -19,6 +19,6 @@ int main(){
    //add_record gets called if action is 1
   action_0_3_logic(action, database); // INITIAL MENU
 
-  return 0;
 
+  return 0;
 }

@@ -7,7 +7,7 @@ int action;
 //CLASS TROSAK FUNCTION IMPLEMENTATIONS
 //------------------------------------------
 //Constructor
-Trosak::Trosak(const char* trosak, int godina, const char* mesec, int dat_novac, int ocekivano, int plata, bool placeno){
+Trosak::Trosak(const char* trosak, int dat_novac, int ocekivano, const char* mesec, int godina, int plata, bool placeno){
     if (trosak){
         //Copying info from expense local variable to trosak class member
         int broj_bajtova_trosak = strlen(trosak) + 1;
@@ -91,17 +91,28 @@ void add_record(Database& d){
     system("reset");
     cout<<"------------------";
 
-    do{
-        cout<<"\nEnter the expense: ";
-        //Clearing cin before getline
+    do {
+        cout << "\nEnter expense: ";
+        
+        // Clearing cin before getline
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cin.getline(trosak, 20);
-    }
-    while (strlen(trosak) < 1 || strlen(trosak) > 20);
+        
+        cin.getline(trosak, 20); // Read input
+    } while (strlen(trosak) < 1 || strlen(trosak) > 20);
+
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //Enter money given
+    cout<<"\nEnter money given: ";
+    cin>>dat_novac;
     
-    cout<<"\nEnter year: ";
-    cin>>godina;
+    do{
+        //Enter expected price
+        cout<<"\nEnter expected price(must be >= money given): ";
+        cin>>ocekivano;
+    }
+    while(ocekivano < dat_novac);
 
     //Clearing cin before newline and entering a month
     do{
@@ -112,13 +123,8 @@ void add_record(Database& d){
     }
     while (!is_it_month(mesec) || strlen(mesec) < 1 || strlen(mesec) > 20);
 
-    cout<<"\nEnter expected price: ";
-    cin>>ocekivano;
-    do {
-        cout<<"\nEnter money given(must be <= than expected): ";
-        cin>>dat_novac;
-    }
-    while (dat_novac > ocekivano);\
+    cout<<"\nEnter year: ";
+    cin>>godina;
 
     cout<<"\nEnter salary: ";
     cin>>plata;
@@ -132,7 +138,7 @@ void add_record(Database& d){
 
     //WORKING WITH FILES
     //Making object of Trosak t that calls its constructor using variables user has entered
-    Trosak t(trosak, godina, mesec, dat_novac, ocekivano, plata, placeno);
+    Trosak t(trosak, dat_novac, ocekivano, mesec, godina, plata, placeno);
 
     //Add record to a file
     ofstream file("database.txt", ios::app); //opens a file for writing and appending
@@ -143,7 +149,7 @@ void add_record(Database& d){
     }
 
     //Writing the actual data to the file
-    printRow(file, trosak, godina, mesec, dat_novac, ocekivano, plata, placeno); //Putting the row into file
+    printRow(file, trosak, dat_novac, ocekivano, mesec, godina, plata, placeno); //Putting the row into file
     //Closing the file
     file.close();
     //END OF WORKING WITH FILES
@@ -206,17 +212,23 @@ void action_0_3_logic(int& action, Database& d){
             print_database();
             int action_0;
             cout<<"\n\n\nReturn to main menu: \t\t0";
-            cout<<"\nExit the program: \t\t1";
+            cout<<"\nDelete database: \t\t1";
+            cout<<"\nExit the program: \t\t2";
             cout<<"\n\n\nEnter action: ";
             cin >> action_0;
             switch(action_0){
                 case 0:
                     action_0_3_logic(action, d);
+                    break;               
+                case 1: //Delete entire database
+                    delete_entire_database();
+                    action_0_3_logic(action, d);
                     break;
-                case 1:
+                case 2:
                     system("reset");
                     cout<<"Exiting the program...\n\n\n";
                     exit(0); //Alternative to return 0, which can't be used in void functions
+                    break;
             }
             break;
         case 1: //Add record
@@ -254,14 +266,14 @@ bool is_it_month(const char* mesec){
             return false;
 }
 // Function to print a row with appropriate formatting to any output stream
-void printRow(std::ostream& out, const char* trosak, int godina, const char* mesec, int dat_novac, int ocekivano, int plata, bool placeno) {
+void printRow(std::ostream& out, const char* trosak, int dat_novac, int ocekivano, const char* mesec, int godina, int plata, bool placeno) {
     out << std::left 
         << std::setw(20) << (strlen(trosak) == 0 ? "N/A" : trosak) 
         << std::setw(20) << (dat_novac == 0.0 ? "0" : std::to_string(dat_novac)) 
         << std::setw(20) << (ocekivano == 0.0 ? "0" : std::to_string(ocekivano)) 
-        << std::setw(20) << (plata == 0.0 ? "0" : std::to_string(plata))
-        << std::setw(20) << (godina == 0 ? "N/A" : std::to_string(godina)) 
         << std::setw(20) << (strlen(mesec) == 0 ? "N/A" : mesec) 
+        << std::setw(20) << (godina == 0 ? "N/A" : std::to_string(godina)) 
+        << std::setw(20) << (plata == 0.0 ? "0" : std::to_string(plata))
         << std::setw(20) << (placeno ? "Da" : "Ne")
         << std::endl;
 }
@@ -270,10 +282,10 @@ void printRow(std::ostream& out, const char* trosak, int godina, const char* mes
 void printHeader(std::ostream& out) {
     out << left
         << setw(20) << "Trosak" 
-        << setw(20) << "Godina" 
-        << setw(20) << "Mesec"
         << setw(20) << "Dat novac" 
         << setw(20) << "Ocekivano" 
+        << setw(20) << "Mesec"
+        << setw(20) << "Godina" 
         << setw(20) << "Plata" 
         << setw(20) << "Placeno" 
         << '\n';
@@ -368,4 +380,11 @@ void print_database(){
     }
 
     fclose(file);  // Close the file
+}
+
+//Function that deletes the entire database
+void delete_entire_database(){
+    ofstream file1("database.txt");
+    printHeader(file1);
+    file1.close();
 }

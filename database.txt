@@ -1,4 +1,2 @@
-Trosak              Godina              Mesec               Dat novac           Ocekivano           Plata               Placeno             
+Trosak              Dat novac           Ocekivano           Mesec               Godina              Plata               Placeno             
 --------------------------------------------------------------------------------------------------------------------------------------------
-Burek sa sirom      2000                2495                141300              1999                january             Ne                  
-ddd                 1995                1995                141300              1000                march               Da                  
