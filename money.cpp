@@ -225,20 +225,25 @@ void action_0_3_logic(int& action, Database& d){
             int action_0;
             cout<<"\n\n\n---------------------------------";
             cout<<"\nReturn to main menu: \t\t0";
-            cout<<"\nDelete database: \t\t1";
-            cout<<"\nExit the program: \t\t2";
+            cout<<"\nDelete last entry: \t\t1";
+            cout<<"\nDelete database: \t\t2";
+            cout<<"\nExit the program: \t\t3";
             cout<<"\n---------------------------------\n\n\n";
             do{
                 cout<<"\nEnter valid action: ";
                 cin >> action_0;
             }
-            while(action_0 < 0 || action_0 > 2);
+            while(action_0 < 0 || action_0 > 3);
             
             switch(action_0){
                 case 0: //Return to main menu
                     action_0_3_logic(action, d);
                     break;               
-                case 1: //Delete entire database
+                case 1: //Delete last entry
+                    delete_last_entry();
+                    action_0_3_logic(action, d);
+                    break;
+                case 2: //Delete entire database
                     system("reset");
                     int delete_database_0_1;
                     do{
@@ -252,7 +257,7 @@ void action_0_3_logic(int& action, Database& d){
                     delete_entire_database();
                     action_0_3_logic(action, d);
                     break;
-                case 2:
+                case 3:
                     system("reset");
                     cout<<"Exiting the program...\n\n\n\n\n\n";
                     exit(0); //Alternative to return 0, which can't be used in void functions
@@ -415,4 +420,57 @@ void delete_entire_database(){
     ofstream file1("database.txt");
     printHeader(file1);
     file1.close();
+}
+
+void delete_last_entry(){
+
+    ifstream file("database.txt"); // Opens file for reading
+    if (!file.is_open()){
+        cerr << "Could not open file for reading.\n";
+        exit(1);
+    }
+    vector<char*> lines; // Creating a vector that holds all lines of the database
+    char buffer[1924];
+
+    // Reading all lines from the file
+    while (file.getline(buffer, sizeof(buffer))){
+        // Allocates memory for each line and copies buffer content into it
+        char* line = new char[strlen(buffer) + 1];
+        strcpy(line, buffer);
+        lines.push_back(line); // Every line added to the back of the local vector
+    }
+    file.close();
+
+    // Remove the last line if the vector is not empty
+    if (!lines.empty()) {
+        delete[] lines.back(); // Free memory allocated for the last line
+        lines.pop_back();      // Remove the last line from the vector
+    }
+
+    // Write the remaining lines back to the file
+    ofstream file2("database.txt");
+    if (!file2.is_open()) {
+        cerr << "Could not open the file for writing!\n";
+        // Clean up allocated memory
+        for (char* line : lines) {
+            delete[] line;
+        }
+        exit(1);
+    }
+
+    for (const auto& l : lines) {
+        file2 << l << '\n';
+        delete[] l;  // Free memory for each line after writing it
+    }
+    file2.close();
+    cout << "Last line removed successfully." << endl;
+
+    //If first line deleted, redraw the Header
+    ifstream file3("database.txt");
+    if (file3.get() == std::ifstream::traits_type::eof()){
+        file3.close();
+        ofstream file4("database.txt");
+        printHeader(file4);
+        file4.close();
+    }
 }

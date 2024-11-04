@@ -71,5 +71,6 @@ void print_database();
 
 //Additional functionalities
 void delete_entire_database();
+void delete_last_entry();
 
 #endif
